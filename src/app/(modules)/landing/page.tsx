@@ -1,11 +1,28 @@
 "use client";
 
+import { createContext, useContext, useState } from "react";
 import { NavBar } from "@/components/ui/navbar";
-import Image from "next/image";
-import { PlayIcon } from "lucide-react";
-import { useState } from "react";
-import clsx from "clsx";
-import { Form } from "@/components/ui/form";
+import ContactForm from "@/components/ui/footer";
+import Viewer3D from "@/components/ui/landing/viewer";
+import { SpecsSection } from "@/components/ui/landing/specs-section";
+import { CarSpects } from "@/components/ui/landing/car-specs";
+import { CarGallerySection } from "@/components/ui/landing/car-gallery-section";
+import { SinglePictureSection } from "@/components/ui/landing/single-picture-section";
+import { InformativeGallery } from "@/components/ui/landing/informative-gallery";
+import { InformativeCard } from "@/components/ui/landing/informative-card";
+import { WideImage } from "@/components/ui/landing/wide-image";
+import { VideoPlayer } from "@/components/ui/landing/video-player";
+import {
+  BenchmarkRow,
+  BenchMarkSection,
+  CarColorSection,
+} from "@/components/ui/landing/benchmarks-section";
+import {
+  CarBenchmarks,
+  CarColor,
+} from "@/components/ui/landing/car-benchmarks";
+import { HeroSection } from "@/components/ui/landing/hero";
+import ColorContext from "@/components/ui/color-context";
 
 export default function LandingPage() {
   const translateCenter = { transform: "translate(-50%, -50%)" };
@@ -18,274 +35,98 @@ export default function LandingPage() {
     );
   };
 
-  const CarBenchmarks = ({
-    title,
-    benchMark,
-  }: {
-    title: string;
-    benchMark: string;
-  }) => {
-    return (
-      <div className="flex flex-row items-center gap-2">
-        <p className="font-medium">{title}</p>
-        <span className="text-5xl text-red-700 font-bold">{benchMark}</span>
-      </div>
-    );
-  };
-
-  const CarColor = ({ customClass }: { customClass: string }) => {
-    return <div className={`w-8 h-8 rounded-full ${customClass}`}></div>;
-  };
-
-  const CarInteriorCard = ({
-    image,
-    text,
-  }: {
-    image: string;
-    text: string;
-  }) => {
-    return (
-      <div className="flex flex-col gap-3 justify-center items-center">
-        <Image src={image} width={300} height={400} alt="interior" />
-        <p className="uppercase font-bold w-60 text-center">{text}</p>
-      </div>
-    );
-  };
-
-  const CarSpects = ({
-    title,
-    specs,
-  }: {
-    title: string;
-    specs: Record<string, string>;
-  }) => {
-    const [mouseOver, setMouseOver] = useState(false);
-    const [showData, setShowData] = useState(false);
-
-    return (
-      <div
-        className={clsx(
-          "group transition-all flex flex-col w-full px-4 py-6 rounded-2xl",
-          mouseOver
-            ? "bg-primaryBlue"
-            : showData
-            ? "bg-primaryBlue"
-            : "bg-transparent"
-        )}
-        onMouseOver={() => {
-          setMouseOver(true);
-        }}
-        onMouseOut={() => {
-          setMouseOver(false);
-        }}
-        onClick={() => {
-          setShowData(!showData);
-        }}
-      >
-        <div className="flex flex-row justify-between">
-          <p
-            className={clsx(
-              "transition-all group-hover:text-white text-xl font-bold",
-              showData ? "text-white" : "text-black"
-            )}
-          >
-            {title}
-          </p>
-          <PlayIcon
-            style={{
-              fill: mouseOver || showData ? "white" : "#00a3b4", // Simplified fill logic
-              color: mouseOver || showData ? "white" : "#00a3b4", // Simplified color logic
-            }}
-            className={clsx(
-              "transition transform", // Ensure transition and transform are applied for smooth effect
-              mouseOver || showData ? "rotate-90" : "rotate-180", // Apply rotate-90 when either condition is true
-              "group-hover:rotate-90"
-            )}
-          />
-        </div>
-
-        <div
-          className={clsx(
-            "overflow-hidden transition-max-height duration-300 ease-in-out",
-            showData ? "max-h-screen" : "max-h-0"
-          )}
-        >
-          <table className="w-full table-auto">
-            <tbody>
-              {Object.entries(specs).map(([keyframes, value], index) => (
-                <tr key={index} className="text-white font-bold text-lg">
-                  <td className="w-[50%] p-1">{keyframes}</td>
-                  <td className="w-[50%] p-1">{value}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
-    );
-  };
+  const primaryColor = "#00a3b4";
 
   return (
     <>
-      <NavBar />
-      <section
-        className="relative h-screen w-full bg-cover bg-no-repeat bg-red-500"
-        style={{
-          backgroundImage: `url("/hero.png")`,
-        }}
-      >
-        <div className="absolute top-[65%] left-[10%] font-bold text-white">
-          <h1 className="text-[5.1rem] font-st">X70 PLUS</h1>
-          <h2 className="text-3xl">
-            INNOVACIÓN Y AMPLITUD <br />
-            REDEFINIDAS
-          </h2>
-        </div>
-      </section>
-      <section className="h-screen w-full relative uppercase">
+      <ColorContext.Provider value={primaryColor}>
+        <NavBar />
+      </ColorContext.Provider>
+      <HeroSection
+        image="/hero.png"
+        title="X70 PLUS"
+        subtitle="INNOVACIÓN Y AMPLITUD REDEFINIDAS"
+      />
+
+      <BenchMarkSection>
         <CarPlaceholder customClass="top-[49%] left-[50%] text-[25rem]" />
         <CarPlaceholder customClass="text-[18rem] top-[35%] left-[20%]" />
         <CarPlaceholder customClass="text-[18rem] top-[35%] left-[80%]" />
 
-        <div className="w-full flex flex-row justify-around text-xl absolute top-28">
+        <BenchmarkRow top={true}>
           <CarBenchmarks title="Caballos de Fuerza Máx." benchMark="197" />
           <CarBenchmarks title="Torque Máximo" benchMark="290" />
           <CarBenchmarks title="Velocidad Máxima (KM/H)" benchMark="180" />
-        </div>
+        </BenchmarkRow>
 
-        <div className="w-full flex flex-row justify-around text-lg absolute bottom-5">
+        <BenchmarkRow top={false}>
           <CarBenchmarks title="Distancia entre ejes (MM)" benchMark="275" />
           <CarBenchmarks title="Desplazamiento (ML)" benchMark="1598" />
           <CarBenchmarks
             title="Consumo de combustible (L/100KM)"
             benchMark="7.5"
           />
-        </div>
+        </BenchmarkRow>
 
-        <div
-          className="flex flex-row gap-5 w-40 absolute left-[53%] top-[85%]"
-          style={translateCenter}
-        >
+        <CarColorSection>
           <CarColor customClass="bg-[#304b6f]" />
           <CarColor customClass="bg-[#1d1d1b]" />
           <CarColor customClass="border border-2" />
-        </div>
-      </section>
+        </CarColorSection>
+      </BenchMarkSection>
 
-      <section className="h-screen w-full flex justify-center items-center">
-        <video
-          src="/video-landing.mp4"
-          typeof="video/mp4"
-          controls
-          className="w-[70%] h-[70%] mt-20"
-        ></video>
-      </section>
+      <VideoPlayer video="/video-landing.mp4" />
 
-      <section className="relative h-screen w-full flex flex-col justify-center items-center">
-        <figure className="relative w-[95%] h-[80%] mt-20">
-          <Image
-            className=" w-full h-full"
-            src="/image1.png"
-            width={200}
-            height={200}
-            alt="Car"
-          />
-          <h1 className="absolute text-primaryBlue top-[-25px] left-0 font-bold uppercase">
-            Seguridad ante todos
-          </h1>
-        </figure>
-      </section>
+      <ColorContext.Provider value={primaryColor}>
+        <WideImage title="Seguridad ante todos" image="/image1.png" />
+      </ColorContext.Provider>
 
-      <section className="relative h-screen w-full flex flex-col justify-center items-center">
-        <figure className="relative w-[95%] h-[80%] mt-20">
-          <Image
-            className=" w-full h-full"
-            src="/image2.png"
-            width={200}
-            height={200}
-            alt="Car"
-          />
-          <h1 className="absolute text-primaryBlue top-[-25px] left-0 font-bold uppercase">
-            TECNOLOGÍA ESPACIAL
-          </h1>
-        </figure>
-      </section>
+      <ColorContext.Provider value={primaryColor}>
+        <WideImage title="TECNOLOGÍA ESPACIAL" image="/image2.png" />
+      </ColorContext.Provider>
 
-      <section className="relative h-screen w-full flex flex-col justify-start py-28 items-center">
-        <h1 className="font-bold text-4xl">COMODIDAD DESDE DONDE LO VEAS</h1>
-        <figure className="mt-5 flex flex-row gap-2">
-          <CarInteriorCard
-            image="/interior1.png"
-            text="Modelo Tridimensional Multinivel"
-          />
-          <CarInteriorCard
-            image="/interior2.png"
-            text="Techo Corredizo Panorámico"
-          />
-          <CarInteriorCard
-            image="/interior3.png"
-            text="Distancia entre ejes súper larga"
-          />
-        </figure>
-      </section>
-
-      <section className="relative h-screen w-full flex flex-col justify-start py-28 items-center">
-        <h1 className="font-bold text-5xl">
-          SEGURIDAD Y RESPALDO PARA DISFRUTAR EL VIAJE
-        </h1>
-        <Image
-          className=" w-[60%] h-full mt-5"
-          src="/image3.png"
-          width={200}
-          height={200}
-          alt="Car"
+      <InformativeGallery title="COMODIDAD DESDE DONDE LO VEAS">
+        <InformativeCard
+          image="/interior1.png"
+          text="Modelo Tridimensional Multinivel"
         />
-      </section>
 
-      <section className="relative h-screen w-full flex justify-center items-center px-[8rem] pb-12 pt-28 ">
-        <div className="grid grid-cols-2 grid-rows-2 gap-2 w-full h-full">
-          <Image
-            src={"/image4.png"}
-            width={200}
-            height={200}
-            className="w-full h-full"
-            alt="Exterior 1"
-          />
-          <Image
-            src={"/image5.png"}
-            width={200}
-            height={200}
-            className="w-full h-full"
-            alt="Exterior 2"
-          />
-          <Image
-            src={"/image6.png"}
-            width={200}
-            height={200}
-            className="w-full h-full"
-            alt="Exterior 3"
-          />
-          <Image
-            src={"/image7.png"}
-            width={200}
-            height={200}
-            className="w-full h-full"
-            alt="Exterior 4"
-          />
-        </div>
-      </section>
+        <InformativeCard
+          image="/interior2.png"
+          text="Techo Corredizo Panorámico"
+        />
+        <InformativeCard
+          image="/interior3.png"
+          text="Distancia entre ejes súper larga"
+        />
+        <InformativeCard image="/image4.png" text="Ejemplo" />
+      </InformativeGallery>
 
-      <section className="min-h-screen w-full flex flex-col justify-center items-center px-[8rem] pb-12 pt-28 ">
-        <h1 className="font-bold text-4xl mb-16">ESPECIFICACIONES</h1>
-        <div className="w-full flex flex-col gap-2">
+      <SinglePictureSection
+        title="SEGURIDAD Y RESPALDO PARA DISFRUTAR EL VIAJE"
+        image="/image3.png"
+      />
+
+      <CarGallerySection
+        images={["/image4.png", "/image5.png", "/image6.png", "/image7.png"]}
+      />
+
+      <SpecsSection>
+        <ColorContext.Provider value={primaryColor}>
           <CarSpects
             title="Descripción general"
             specs={{ Test: "This is a test" }}
           />
+        </ColorContext.Provider>
+
+        <ColorContext.Provider value={primaryColor}>
           <CarSpects
             title="Parámetros básicos"
             specs={{ Test: "This is a test" }}
           />
+        </ColorContext.Provider>
+
+        <ColorContext.Provider value={primaryColor}>
           <CarSpects
             title="Motor"
             specs={{
@@ -306,21 +147,20 @@ export default function LandingPage() {
               "Torque máxima velocidad (RPM)": "2000-4000",
             }}
           />
+        </ColorContext.Provider>
+        <ColorContext.Provider value={primaryColor}>
           <CarSpects title="Chasis" specs={{ Test: "This is a test" }} />
+        </ColorContext.Provider>
+        <ColorContext.Provider value={primaryColor}>
           <CarSpects title="Frenos" specs={{ Test: "This is a test" }} />
-        </div>
-      </section>
+        </ColorContext.Provider>
+      </SpecsSection>
 
-      <section className="relative h-screen w-full flex flex-col justify-start py-28 items-center">
-        <h1 className="font-bold text-5xl">VISUALIZADOR 3D</h1>
-        <Image
-          className=" w-[60%] h-full mt-5"
-          src="/visualizador.png"
-          width={200}
-          height={200}
-          alt="Car"
-        />
-      </section>
+      <Viewer3D />
+
+      <ColorContext.Provider value={primaryColor}>
+        <ContactForm />
+      </ColorContext.Provider>
     </>
   );
 }
