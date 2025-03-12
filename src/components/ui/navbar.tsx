@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import clsx from "clsx";
+import { usePrimaryColor } from "./color-context";
 
 function NavBar() {
   const [scrollPosition, setScrollPosition] = useState(0);
@@ -18,12 +19,15 @@ function NavBar() {
     };
   }, []);
 
+  const primaryColor = usePrimaryColor();
+
   return (
     <nav
       className={clsx(
-        "transition flex flex-col fixed w-full bg-none text-customCeleste z-40",
+        "transition flex flex-col fixed w-full bg-none z-40",
         scrollPosition > 0 && "bg-customBlack text-white"
       )}
+      style={{ color: primaryColor }}
     >
       <section className="flex flex-row px-16 py-2 justify-between items-center">
         <figure className="flex flex-col items-center">
@@ -40,7 +44,7 @@ function NavBar() {
           <Link href={"/"}>CONTÁCTANOS</Link>
         </div>
       </section>
-      <div className="bg-primaryBlue h-2" />
+      <div className="h-2" style={{ backgroundColor: primaryColor }} />
     </nav>
   );
 }
